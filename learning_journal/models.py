@@ -1,8 +1,13 @@
+import datetime
+
 from sqlalchemy import (
     Column,
     Index,
     Integer,
     Text,
+    Unicode,
+    UnicodeText,
+    DateTime
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,3 +30,11 @@ class MyModel(Base):
     value = Column(Integer)
 
 Index('my_index', MyModel.name, unique=True, mysql_length=255)
+
+class Entry(Base):
+    __tablename__ = 'entries'
+    id = Column(Integer, primary_key=True)
+    title = Column(Unicode(255), unique=True, nullable=False)
+    body = Column(UnicodeText)
+    created = Column(DateTime, default=datetime.now)
+    edited = Column(DateTime, default=datetime.now, onupdate=datetime.now())
