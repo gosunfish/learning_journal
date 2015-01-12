@@ -39,17 +39,6 @@ class Entry(Base):
     created = Column(DateTime, nullable=False, default=datetime.datetime.now())
     edited = Column(DateTime, nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
 
-    def all(self):
-        q1 = self.session.query(self.title, self.body)
-        for title, body in q1:
-            print title, body
-
-
-    def by_id(self, entry_id):
-        q1 = self.session.query(self.title, self.body).filter_by(id=entry_id)
-        for title, body in q1:
-            print title, body
-
     @classmethod
     def all(cls):
         for instance in cls.query(Entry.id, Entry.title, Entry.body, Entry.created, Entry.edited):
