@@ -39,11 +39,6 @@ class Entry(Base):
     created = Column(DateTime, nullable=False, default=datetime.datetime.now())
     edited = Column(DateTime, nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
 
-    def __init__(self):
-        self.Session = DBSession()
-        self.session.query(self).all()
-
-
     def all(self):
         q1 = self.session.query(self.title, self.body)
         for title, body in q1:
@@ -55,6 +50,13 @@ class Entry(Base):
         for title, body in q1:
             print title, body
 
+    @classmethod
+    def all(cls):
+        for instance in cls.query(Entry.id, Entry.title, Entry.body, Entry.created, Entry.edited):
+            print instance.title, instance.body, instance.created, instance.edited
 
+    @classmethod
+    def by_id(cls,entry_id):
+        for instance in cls.query(Entry.id, Entry.title, Entry.body, Entry.created, Entry.edited).filter_by(id=entry_id):
+            print instance.title, instance.body, instance.created, instance.edited
 
-# nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now()
