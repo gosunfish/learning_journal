@@ -36,5 +36,10 @@ class Entry(Base):
     id = Column(Integer, primary_key=True)
     title = Column(Unicode(255), unique=True, nullable=False)
     body = Column(UnicodeText)
-    created = Column(DateTime, default=datetime.now)
-    edited = Column(DateTime, default=datetime.now, onupdate=datetime.now())
+    created = Column(DateTime)
+    edited = Column(DateTime)
+
+
+
+
+# default=datetime.datetime, onupdate=datetime.datetime,
