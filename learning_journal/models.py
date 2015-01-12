@@ -36,24 +36,25 @@ class Entry(Base):
     id = Column(Integer, primary_key=True)
     title = Column(Unicode(255), unique=True, nullable=False)
     body = Column(UnicodeText)
-    created = Column(DateTime, nullable=True)
-    edited = Column(DateTime, nullable=True)
+    created = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    edited = Column(DateTime, nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
 
     def __init__(self):
-        session = DBSession()
-        session.query(self).all()
-        q1 = session.query(self.title, self.body)
+        self.Session = DBSession()
+        self.session.query(self).all()
 
-    @classmethod
-    def all(cls, q1):
-        for title, body in q1:
-            print title, body
 
-    @classmethod
-    def by_id(cls, q1):
+    def all(self):
+        q1 = self.session.query(self.title, self.body)
         for title, body in q1:
             print title, body
 
 
+    def by_id(self, entry_id):
+        q1 = self.session.query(self.title, self.body).filter_by(id=entry_id)
+        for title, body in q1:
+            print title, body
 
-# nullable=False, default=datetime.datetime, onupdate=datetime.datetime
+
+
+# nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now()
