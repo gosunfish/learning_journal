@@ -14,7 +14,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
     scoped_session,
-    sessionmaker,
+    sessionmaker
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -41,11 +41,12 @@ class Entry(Base):
 
     @classmethod
     def all(cls):
-        for instance in cls.query(Entry.id, Entry.title, Entry.body, Entry.created, Entry.edited):
-            print instance.title, instance.body, instance.created, instance.edited
+        q = DBSession.query(cls).all()
+        return q
 
     @classmethod
     def by_id(cls,entry_id):
-        for instance in cls.query(Entry.id, Entry.title, Entry.body, Entry.created, Entry.edited).filter_by(id=entry_id):
-            print instance.title, instance.body, instance.created, instance.edited
+        q = DBSession.query(cls).filter_by(id=entry_id)
+        return q
+
 
