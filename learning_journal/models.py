@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from sqlalchemy import (
     Column,
@@ -36,17 +36,23 @@ class Entry(Base):
     id = Column(Integer, primary_key=True)
     title = Column(Unicode(255), unique=True, nullable=False)
     body = Column(UnicodeText)
-    created = Column(DateTime, nullable=False, default=datetime.datetime.now())
-    edited = Column(DateTime, nullable=False, default=datetime.datetime.now(), onupdate=datetime.datetime.now())
+    created = Column(DateTime, nullable=False, default=datetime.now())
+    edited = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
+    #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
-    def all(cls):
-        q = DBSession.query(cls).all()
-        return q
+    def all(cls, session=None):
+        if session is None:
+            session = DBSession
+        session.query(cls).all()
+        return session
 
+    #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
-    def by_id(cls,entry_id):
-        q = DBSession.query(cls).filter_by(id=entry_id)
-        return q
+    def by_id(cls, entry_id, session=None):
+        if session is None:
+            session = DBSession
+        session.query(cls).filter_by(id=entry_id)
+        return session
 
 
