@@ -45,7 +45,6 @@ class Entry(Base):
         if session is None:
             session = DBSession
         session.query(cls).all()
-        return session
 
     #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
@@ -53,6 +52,5 @@ class Entry(Base):
         if session is None:
             session = DBSession
         session.query(cls).filter_by(id=entry_id)
-        return session
 
 

@@ -42,3 +42,9 @@ def main(argv=sys.argv):
     with transaction.manager:
         model = Entry(title='Time Travel', body='The earth is neither round nor flat. It is actually shaped like ribbon candy.')
         DBSession.add(model)
+        model = Entry(title='Good Men', body='Now is the time for all good men to come to the aid of their country.')
+        DBSession.add(model)
+        model = Entry(title='Miranda', body='I have the right to remain silent. Anything I say can and will be used against me.')
+        DBSession.add(model)
+        model = Entry(title='Surgeon General', body='Smoking causes cancer.')
+        DBSession.add(model)
