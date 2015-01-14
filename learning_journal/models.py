@@ -44,13 +44,17 @@ class Entry(Base):
     def all(cls, session=None):
         if session is None:
             session = DBSession
-        session.query(cls).all()
+        session.query(cls).order_by(cls.created.desc).all()
 
+    # The
     #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
     def by_id(cls, entry_id, session=None):
         if session is None:
             session = DBSession
-        session.query(cls).filter_by(id=entry_id)
+        session.query(cls).get(entry_id)
 
+        # or filter which is not as efficient, but can return zero or many rows.
+        # session.query(cls).filter(id==entry_id)
+        # get works for zero or one rows that match. otherwise barfs.
 
