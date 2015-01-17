@@ -38,7 +38,6 @@ class Entry(Base):
             session = DBSession
         return session.query(cls).order_by(sa.desc(cls.created)).all()
 
-    # The
     #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
     def by_id(cls, entry_id, session=None):
@@ -50,3 +49,18 @@ class Entry(Base):
         # session.query(cls).filter(id==entry_id)
         # get works for zero or one rows that match. otherwise barfs.
 
+class User(Base):
+    __tablename__ = 'users'
+    id = sa.Column(sa.Integer, primary_key=True)
+    username = sa.Column(sa.Unicode(255), nullable=False)
+    password = sa.Column(sa.Unicode(255), nullable=False)
+    created = sa.Column(sa.DateTime, default=datetime.utcnow)
+    edited = sa.Column(sa.DateTime, default=datetime.utcnow)
+
+    @classmethod
+    def by_username(cls, username, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).get(username)
+
+sa.Index('user_index', User.username, unique=True, mysql_length=255)
