@@ -1,9 +1,6 @@
-from pyramid.exceptions import HTTPNotFound
-from pyramid.httpexceptions import HTTPFound
-from pyramid.response import Response
+# In pyramid, controllers are called views. The views below are the MVC controllers.
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 from pyramid.view import view_config
-
-from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
@@ -11,15 +8,7 @@ from .models import (
     Entry,
     )
 
-from pyramid.exceptions import HTTPNotFound
-
-# @view_config(route_name='home', renderer='templates/mytemplate.pt')
-# def my_view(request):
-#     try:
-#         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-#     except DBAPIError:
-#         return Response(conn_err_msg, content_type='text/plain', status_int=500)
-#     return {'one': one, 'project': 'learning_journal'}
+from .forms import EntryCreateForm, EntryEditForm
 
 @view_config(route_name='home', renderer='templates/list.jinja2')
 def index_page(request):
@@ -34,29 +23,25 @@ def detail_page(request):
         return HTTPNotFound()
     return {'entry': entry}
 
-@view_config(route_name='action', match_param='action=create', renderer='string')
-def create_page(request):
-    return 'create page'
+@view_config(route_name='action', match_param='action=create', renderer='templates/edit.jinja2')
+def create(request):
+    entry = Entry()
+    form = EntryCreateForm(request.POST)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(entry)
+        DBSession.add(entry)
+        return HTTPFound(location=request.route_url('home'))
+    return {'form': form, 'action': request.matchdict.get('action')}
 
-@view_config(route_name='action', match_param='action=edit', renderer='string')
-def edit_page(request):
-    return 'edit page'
-
-
-
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to run the "initialize_learning_journal_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
-
+@view_config(route_name='action', match_param='action=edit', renderer='templates/edit.jinja2')
+def update(request):
+    id = request.params.get('id', -1)
+    entry = Entry.by_id(id)
+    if not entry:
+        return HTTPNotFound
+    form = EntryEditForm(request.POST, entry)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(entry)
+        DBSession.add(entry)
+        return HTTPFound(location=request.route_url('detail', id=id))
+    return {'form': form, 'action': request.matchdict.get('action')}

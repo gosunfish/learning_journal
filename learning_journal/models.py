@@ -1,14 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import (
-    Column,
-    Index,
-    Integer,
-    Text,
-    Unicode,
-    UnicodeText,
-    DateTime
-    )
+import sqlalchemy as sa
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -25,26 +17,26 @@ Base = declarative_base()
 
 class MyModel(Base):
     __tablename__ = 'models'
-    id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.Text)
+    value = sa.Column(sa.Integer)
 
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+sa.Index('my_index', MyModel.name, unique=True, mysql_length=255)
 
 class Entry(Base):
     __tablename__ = 'entries'
-    id = Column(Integer, primary_key=True)
-    title = Column(Unicode(255), unique=True, nullable=False)
-    body = Column(UnicodeText)
-    created = Column(DateTime, nullable=False, default=datetime.now())
-    edited = Column(DateTime, nullable=False, default=datetime.now(), onupdate=datetime.now())
+    id = sa.Column(sa.Integer, primary_key=True)
+    title = sa.Column(sa.Unicode(255), unique=True, nullable=False)
+    body = sa.Column(sa.UnicodeText, default=u'')
+    created = sa.Column(sa.DateTime, default=datetime.utcnow)
+    edited = sa.Column(sa.DateTime, default=datetime.utcnow)
 
     #The session parameter is used when this method is called from an interpreter vs. an HTTP call
     @classmethod
     def all(cls, session=None):
         if session is None:
             session = DBSession
-        session.query(cls).order_by(cls.created.desc).all()
+        return session.query(cls).order_by(sa.desc(cls.created)).all()
 
     # The
     #The session parameter is used when this method is called from an interpreter vs. an HTTP call
@@ -52,7 +44,7 @@ class Entry(Base):
     def by_id(cls, entry_id, session=None):
         if session is None:
             session = DBSession
-        session.query(cls).get(entry_id)
+        return session.query(cls).get(entry_id)
 
         # or filter which is not as efficient, but can return zero or many rows.
         # session.query(cls).filter(id==entry_id)

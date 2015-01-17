@@ -1,6 +1,7 @@
 from wtforms import (
     Form,
-    TextField,
+    HiddenField,
+    StringField,
     TextAreaField,
     validators,
 )
@@ -9,7 +10,7 @@ strip_filter = lambda x: x.strip() if x else None
 
 
 class EntryCreateForm(Form):
-    title = TextField(
+    title = StringField(
         'Entry title',
         [validators.Length(min=1, max=255)],
         filters=[strip_filter]
@@ -19,3 +20,6 @@ class EntryCreateForm(Form):
         [validators.Length(min=1)],
         filters=[strip_filter]
     )
+
+class EntryEditForm(EntryCreateForm):
+    id = HiddenField()
