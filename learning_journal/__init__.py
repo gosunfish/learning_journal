@@ -20,9 +20,9 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
+    secret = os.environ.get('AUTH_SECRET', 'somesecret'),
     config = Configurator(
         settings=settings,
-        secret = os.environ.get('AUTH_SECRET', 'somesecret'),
         authentication_policy=AuthTktAuthenticationPolicy(secret),
         authorization_policy=ACLAuthorizationPolicy(),
         default_permission='view'
