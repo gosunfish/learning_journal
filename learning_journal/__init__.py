@@ -1,3 +1,4 @@
+import os
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
@@ -14,12 +15,15 @@ from .security import EntryFactory
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+    if 'DATABASE_URL' in os.environ:
+        settings['sqlalchemy.url'] = os.environ['DATABASE_URL']
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     config = Configurator(
         settings=settings,
-        authentication_policy=AuthTktAuthenticationPolicy('somesecret'),
+        secret = os.environ.get('AUTH_SECRET', 'somesecret'),
+        authentication_policy=AuthTktAuthenticationPolicy(secret),
         authorization_policy=ACLAuthorizationPolicy(),
         default_permission='view'
     )
