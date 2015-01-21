@@ -16,8 +16,10 @@ from ..models import (
     MyModel,
     Base,
     Entry,
+    User,
     )
 
+from cryptacular.bcrypt import BCRYPTPasswordManager as Manager
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
@@ -37,9 +39,6 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = MyModel(name='one', value=1)
-        DBSession.add(model)
-    with transaction.manager:
         model = Entry(title='Time Travel', body='The earth is neither round nor flat. It is actually shaped like ribbon candy.')
         DBSession.add(model)
         model = Entry(title='Good Men', body='Now is the time for all good men to come to the aid of their country.')
@@ -48,3 +47,8 @@ def main(argv=sys.argv):
         DBSession.add(model)
         model = Entry(title='Surgeon General', body='Smoking causes cancer.')
         DBSession.add(model)
+        # replace the code to create a MyModel instance
+        manager = Manager()
+        password = manager.encode(u'admin')
+        admin = User(username=u'admin', password=password)
+        DBSession.add(admin)

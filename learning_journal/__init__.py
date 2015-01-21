@@ -28,5 +28,6 @@ def main(global_config, **settings):
     config.add_route('home', '/', factory=EntryFactory)
     config.add_route('detail', '/journal/{id:\d+}', factory=EntryFactory) # using id:regex
     config.add_route('action', '/journal/{action}', factory=EntryFactory)
+    config.add_route('auth', '/sign/{action}', factory=EntryFactory)
     config.scan()
     return config.make_wsgi_app()

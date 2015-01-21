@@ -11,6 +11,8 @@ from sqlalchemy.orm import (
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
+from cryptacular.bcrypt import BCRYPTPasswordManager as Manager
+
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
@@ -62,5 +64,9 @@ class User(Base):
         if session is None:
             session = DBSession
         return session.query(cls).get(username)
+
+    def verify_password(self, password):
+        manager = Manager()
+        return manager.check(self.password, password)
 
 sa.Index('user_index', User.username, unique=True, mysql_length=255)
