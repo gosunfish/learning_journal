@@ -51,7 +51,7 @@ class Entry(Base):
 
 class User(Base):
     __tablename__ = 'users'
-    id = sa.Column(sa.Integer, primary_key=True)
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     username = sa.Column(sa.Unicode(255), nullable=False)
     password = sa.Column(sa.Unicode(255), nullable=False)
     created = sa.Column(sa.DateTime, default=datetime.utcnow)

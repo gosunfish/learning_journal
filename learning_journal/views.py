@@ -23,7 +23,10 @@ def detail_page(request):
         return HTTPNotFound()
     return {'entry': entry}
 
-@view_config(route_name='action', match_param='action=create', renderer='templates/edit.jinja2')
+@view_config(route_name='action',
+             match_param='action=create',
+             renderer='templates/edit.jinja2',
+             permission='create')
 def create(request):
     entry = Entry()
     form = EntryCreateForm(request.POST)
@@ -33,7 +36,10 @@ def create(request):
         return HTTPFound(location=request.route_url('home'))
     return {'form': form, 'action': request.matchdict.get('action')}
 
-@view_config(route_name='action', match_param='action=edit', renderer='templates/edit.jinja2')
+@view_config(route_name='action',
+             match_param='action=edit',
+             renderer='templates/edit.jinja2',
+             permission='create')
 def update(request):
     id = request.params.get('id', -1)
     entry = Entry.by_id(id)

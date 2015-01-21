@@ -1,3 +1,6 @@
+.buttonic {
+    appearance: button;}
+
 body{
     color:#111;
     padding:0;
@@ -71,3 +74,4 @@ footer{
     color: #ccc;
     border-top: 3px solid #fff;
     border-bottom: 3px solid #fff;}
+
