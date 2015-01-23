@@ -28,7 +28,7 @@ sa.Index('my_index', MyModel.name, unique=True, mysql_length=255)
 class Entry(Base):
     __tablename__ = 'entries'
     id = sa.Column(sa.Integer, primary_key=True)
-    title = sa.Column(sa.Unicode(255), unique=True, nullable=False)
+    title = sa. Column(sa.Unicode(255), unique=True, nullable=False)
     body = sa.Column(sa.UnicodeText, default=u'')
     created = sa.Column(sa.DateTime, default=datetime.utcnow)
     edited = sa.Column(sa.DateTime, default=datetime.utcnow)
@@ -47,6 +47,7 @@ class Entry(Base):
             session = DBSession
         return session.query(cls).get(entry_id)
 
+
         # or filter which is not as efficient, but can return zero or many rows.
         # session.query(cls).filter(id==entry_id)
         # get works for zero or one rows that match. otherwise barfs.
@@ -63,7 +64,7 @@ class User(Base):
     def by_username(cls, username, session=None):
         if session is None:
             session = DBSession
-        return session.query(cls).get(username)
+        return session.query(cls).filter(username==username)
 
     def verify_password(self, password):
         manager = Manager()
