@@ -64,7 +64,6 @@ class User(Base):
     def by_username(cls, username, session=None):
         if session is None:
             session = DBSession
-        x=session.query(cls).filter(cls.username==username).first()
         return session.query(cls).filter(cls.username==username).first()
 
     def verify_password(self, password):
