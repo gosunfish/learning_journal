@@ -70,6 +70,4 @@ class User(Base):
         manager = Manager()
         return manager.check(self.password, password)
 
-        # return manager.check('admin', 'admin')
-
 sa.Index('user_index', User.username, unique=True, mysql_length=255)
