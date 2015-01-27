@@ -12,6 +12,10 @@
   {% endfor %}
   <p><input type="submit" name="Log In" value="Log In"/></p>
 </form></aside>
+{% else %}
+<aside><form action="{{ request.route_url('auth', action='out') }}" method="POST">
+  <p><input type="submit" name="Log Out" value="Log Out"/></p>
+</form></aside>
 {% endif %}
 {% if entries %}
 <h2>Journal Entries</h2>
@@ -25,5 +29,7 @@
 {% else %}
 <p>This journal is empty</p>
 {% endif %}
+{% if not login_form %}
 <p><a href="{{ request.route_url('action', action='create') }}" class="buttonic">New Entry</a></p>
+{% endif %}
 {% endblock %}

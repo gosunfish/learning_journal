@@ -11,8 +11,21 @@ from .models import (
     )
 
 from .forms import EntryCreateForm, EntryEditForm, LoginForm
+from jinja2 import Markup
+import markdown
 
-@view_config(route_name='home', renderer='templates/list.jinja2')
+def render_markdown(content):
+    output = Markup(
+        markdown.markdown(
+            content,
+            extensions=['codehilite(pygments_style=colorful)', 'fenced_code']
+        )
+    )
+    return output
+
+
+@view_config(route_name='home',
+             renderer='templates/list.jinja2')
 def index_page(request):
     entries = Entry.all()
     form = None
@@ -20,13 +33,17 @@ def index_page(request):
         form = LoginForm()
     return {'entries': entries, 'login_form': form}
 
-@view_config(route_name='detail', renderer='templates/detail.jinja2')
+
+@view_config(route_name='detail',
+             renderer='templates/detail.jinja2')
 def detail_page(request):
     this_id = request.matchdict.get('id', -1)
     entry = Entry.by_id(this_id)
     if not entry:
         return HTTPNotFound()
-    return {'entry': entry}
+    logged_in = authenticated_userid(request)
+    return {'entry': entry, 'logged_in': logged_in}
+
 
 @view_config(route_name='action',
              match_param='action=create',
@@ -40,6 +57,7 @@ def create(request):
         DBSession.add(entry)
         return HTTPFound(location=request.route_url('home'))
     return {'form': form, 'action': request.matchdict.get('action')}
+
 
 @view_config(route_name='action',
              match_param='action=edit',
@@ -57,11 +75,16 @@ def update(request):
         return HTTPFound(location=request.route_url('detail', id=id))
     return {'form': form, 'action': request.matchdict.get('action')}
 
+
 @view_config(route_name='auth',
              match_param='action=in',
              renderer='string',
              request_method='POST')
-def sign_in(request):
+@view_config(route_name='auth',
+             match_param='action=out',
+             renderer='string',
+             request_method='POST')
+def sign_in_out(request):
     login_form = None
     if request.method == 'POST':
         login_form = LoginForm(request.POST)
